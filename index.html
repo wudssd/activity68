@@ -320,7 +320,7 @@
                         <tbody>
                             <tr>
                                 <td>
-                                    <select id="identity1" name="identity1" required>
+                                    <select id="identity1" name="identity1" required class="identity-select">
                                         <option value="" disabled selected>เลือกอัตลักษณ์</option>
                                         <option value="รักชาติ">รักชาติ</option>
                                         <option value="กตัญญู">กตัญญู</option>
@@ -592,37 +592,92 @@
                 togglePercentageInput(this, document.getElementById('percentage5'));
             });
             
-            // Prevent duplicate identity selections
+            // ฟังก์ชันตรวจสอบว่าอัตลักษณ์ถูกเลือกซ้ำหรือไม่
+            function checkDuplicateIdentity(currentSelect) {
+                const selectedValue = currentSelect.value;
+                if (!selectedValue) return false;
+                
+                let isDuplicate = false;
+                
+                // เก็บรายการ select ทั้งหมดที่มีการเลือกค่า
+                const allSelects = Array.from(identitySelects).filter(select => select.value !== "");
+                
+                // ตรวจสอบว่ามีการเลือกซ้ำกับ select อื่นหรือไม่
+                allSelects.forEach(select => {
+                    if (select !== currentSelect && select.value === selectedValue) {
+                        isDuplicate = true;
+                    }
+                });
+                
+                return isDuplicate;
+            }
+            
+            // อัปเดตตัวเลือกในแต่ละ select เพื่อซ่อนตัวเลือกที่ถูกเลือกไปแล้ว
+            function updateIdentityOptions() {
+                // เก็บค่าที่ถูกเลือกทั้งหมด
+                const selectedValues = Array.from(identitySelects)
+                    .map(select => select.value)
+                    .filter(value => value !== "");
+                
+                // อัปเดตตัวเลือกในแต่ละ select
+                identitySelects.forEach(select => {
+                    const currentValue = select.value;
+                    
+                    // เก็บตัวเลือกปัจจุบัน
+                    const options = Array.from(select.options);
+                    
+                    // รีเซ็ตตัวเลือกทั้งหมด (ยกเว้นตัวเลือกแรก)
+                    for (let i = 1; i < options.length; i++) {
+                        const option = options[i];
+                        option.disabled = false;
+                        
+                        // ถ้าตัวเลือกนี้ถูกเลือกโดย select อื่นแล้ว ให้ปิดการใช้งาน
+                        if (option.value !== currentValue && selectedValues.includes(option.value)) {
+                            option.disabled = true;
+                        }
+                    }
+                });
+            }
+            
+            // เพิ่ม event listener สำหรับการเปลี่ยนแปลงค่าใน select
             identitySelects.forEach(select => {
                 select.addEventListener('change', function() {
-                    const selectedValue = this.value;
-                    if (!selectedValue) return;
-                    
-                    identitySelects.forEach(otherSelect => {
-                        if (otherSelect !== this && otherSelect.value === selectedValue) {
-                            Swal.fire({
-                                title: 'ข้อผิดพลาด',
-                                text: 'คุณได้เลือกอัตลักษณ์นี้ไปแล้ว กรุณาเลือกอัตลักษณ์อื่น',
-                                icon: 'error',
-                                confirmButtonText: 'ตกลง',
-                                confirmButtonColor: '#9370DB'
-                            });
-                            this.value = '';
-                            
-                            // ถ้าเป็น identity-select ให้ปิด input ร้อยละด้วย
-                            if (this.classList.contains('identity-select')) {
-                                const inputId = this.id.replace('identity', 'percentage');
-                                const percentageInput = document.getElementById(inputId);
-                                if (percentageInput) {
-                                    percentageInput.disabled = true;
-                                    percentageInput.value = "0";
-                                    calculateTotalPercentage();
-                                }
+                    // ตรวจสอบการซ้ำกัน (สำหรับความปลอดภัย แม้ว่าเราจะปิดตัวเลือกที่ซ้ำแล้วก็ตาม)
+                    if (checkDuplicateIdentity(this)) {
+                        Swal.fire({
+                            title: 'ข้อผิดพลาด',
+                            text: 'คุณได้เลือกอัตลักษณ์นี้ไปแล้ว กรุณาเลือกอัตลักษณ์อื่น',
+                            icon: 'error',
+                            confirmButtonText: 'ตกลง',
+                            confirmButtonColor: '#9370DB'
+                        });
+                        this.value = '';
+                        
+                        // ถ้าเป็น identity-select ให้ปิด input ร้อยละด้วย
+                        if (this.classList.contains('identity-select')) {
+                            const inputId = this.id.replace('identity', 'percentage');
+                            const percentageInput = document.getElementById(inputId);
+                            if (percentageInput) {
+                                percentageInput.disabled = true;
+                                percentageInput.value = "0";
+                                calculateTotalPercentage();
                             }
                         }
-                    });
+                    }
+                    
+                    // อัปเดตตัวเลือกในทุก select
+                    updateIdentityOptions();
+                    
+                    // ควบคุมการเปิด/ปิดช่องกรอกร้อยละ
+                    if (this.id.includes('identity')) {
+                        const percentageId = this.id.replace('identity', 'percentage');
+                        togglePercentageInput(this, document.getElementById(percentageId));
+                    }
                 });
             });
+            
+            // เรียกใช้ฟังก์ชันอัปเดตตัวเลือกเมื่อโหลดหน้า
+            updateIdentityOptions();
             
             // Form submission
             form.addEventListener('submit', function(e) {
@@ -741,6 +796,9 @@
                         document.getElementById('percentage3').disabled = true;
                         document.getElementById('percentage4').disabled = true;
                         document.getElementById('percentage5').disabled = true;
+                        
+                        // รีเซ็ตตัวเลือกอัตลักษณ์
+                        updateIdentityOptions();
                     });
                 })
                 .catch(error => {
@@ -756,5 +814,5 @@
             });
         });
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9545410261807322',t:'MTc1MDY5NTAxMC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9545552173eb7334',t:'MTc1MDY5NTgzNC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
