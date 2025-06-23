@@ -1,0 +1,707 @@
+
+
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>แผนกิจกรรมส่งเสริมอัตลักษณ์และพัฒนาสมรรถนะนักศึกษา</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.32/dist/sweetalert2.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.32/dist/sweetalert2.all.min.js"></script>
+    <style>
+        :root {
+            --primary-color: #9370DB;
+            --primary-light: #B19CD9;
+            --primary-lighter: #D8BFD8;
+            --white: #ffffff;
+            --gray-light: #f5f5f5;
+            --gray: #e0e0e0;
+            --text-dark: #333333;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Kanit', sans-serif;
+        }
+        
+        body {
+            background-color: var(--gray-light);
+            color: var(--text-dark);
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 30px;
+            background-color: var(--white);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .logo {
+            width: 100px;
+            margin-bottom: 15px;
+        }
+        
+        .title {
+            font-size: 1.5rem;
+            font-weight: 500;
+            text-align: center;
+            color: var(--primary-color);
+        }
+        
+        .subtitle {
+            font-size: 1rem;
+            text-align: center;
+            color: var(--text-dark);
+        }
+        
+        .form-container {
+            background-color: var(--white);
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .form-section {
+            margin-bottom: 30px;
+        }
+        
+        .section-title {
+            font-size: 1.2rem;
+            font-weight: 500;
+            margin-bottom: 15px;
+            color: var(--primary-color);
+            border-bottom: 2px solid var(--primary-lighter);
+            padding-bottom: 5px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 400;
+        }
+        
+        .required::after {
+            content: " *";
+            color: red;
+        }
+        
+        input, select {
+            width: 100%;
+            padding: 10px 15px;
+            border: 1px solid var(--gray);
+            border-radius: 5px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+        
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+        
+        .error-message {
+            color: red;
+            font-size: 0.85rem;
+            margin-top: 5px;
+            display: none;
+        }
+        
+        .identity-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        
+        .identity-table th, .identity-table td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid var(--gray);
+        }
+        
+        .identity-table th {
+            background-color: var(--primary-lighter);
+            color: var(--text-dark);
+        }
+        
+        .identity-table select {
+            width: 100%;
+        }
+        
+        .identity-table input {
+            width: 80px;
+        }
+        
+        .competency-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        
+        @media (max-width: 768px) {
+            .competency-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .identity-table {
+                font-size: 0.9rem;
+            }
+            
+            .identity-table input {
+                width: 60px;
+            }
+        }
+        
+        .competency-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .competency-item select {
+            width: 100px;
+        }
+        
+        .submit-btn {
+            background-color: var(--primary-color);
+            color: var(--white);
+            border: none;
+            padding: 12px 20px;
+            font-size: 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            width: 100%;
+            font-weight: 500;
+        }
+        
+        .submit-btn:hover {
+            background-color: var(--primary-light);
+        }
+        
+        .total-percentage {
+            font-weight: 500;
+            margin-top: 10px;
+            text-align: right;
+        }
+        
+        .percentage-warning {
+            color: red;
+            display: none;
+            margin-top: 5px;
+            text-align: right;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <img src="https://www.wu.ac.th/uploads/logoWU_1631668089.png" alt="มหาวิทยาลัยวลัยลักษณ์" class="logo">
+            <h1 class="title">แผนกิจกรรมส่งเสริมอัตลักษณ์และพัฒนาสมรรถนะนักศึกษา</h1>
+            <p class="subtitle">(นอกหลักสูตร) ประจำปีการศึกษา 2568</p>
+        </div>
+        
+        <div class="form-container">
+            <form id="activityForm">
+                <div class="form-section">
+                    <h2 class="section-title">ข้อมูลทั่วไป</h2>
+                    
+                    <div class="form-group">
+                        <label for="department" class="required">หน่วยงานที่จัด</label>
+                        <select id="department" name="department" required>
+                            <option value="" disabled selected>กรุณาเลือกหน่วยงาน</option>
+                            <option value="การจัดการ">การจัดการ</option>
+                            <option value="การบัญชีและการเงิน">การบัญชีและการเงิน</option>
+                            <option value="เทคโนโลยีการเกษตรและอุตสาหกรรมอาหาร">เทคโนโลยีการเกษตรและอุตสาหกรรมอาหาร</option>
+                            <option value="นิติศาสตร์">นิติศาสตร์</option>
+                            <option value="พยาบาลศาสตร์">พยาบาลศาสตร์</option>
+                            <option value="แพทยศาสตร์">แพทยศาสตร์</option>
+                            <option value="เภสัชศาสตร์">เภสัชศาสตร์</option>
+                            <option value="รัฐศาสตร์และรัฐประศาสนศาสตร์">รัฐศาสตร์และรัฐประศาสนศาสตร์</option>
+                            <option value="วิทยาศาสตร์">วิทยาศาสตร์</option>
+                            <option value="วิศวกรรมศาสตร์และเทคโนโลยี">วิศวกรรมศาสตร์และเทคโนโลยี</option>
+                            <option value="ศึกษาศาสตร์">ศึกษาศาสตร์</option>
+                            <option value="ศิลปศาสตร์">ศิลปศาสตร์</option>
+                            <option value="สถาปัตยกรรมศาสตร์และการออกแบบ">สถาปัตยกรรมศาสตร์และการออกแบบ</option>
+                            <option value="สหเวชศาสตร์">สหเวชศาสตร์</option>
+                            <option value="สาธารณสุขศาสตร์">สาธารณสุขศาสตร์</option>
+                            <option value="สารสนเทศศาสตร์">สารสนเทศศาสตร์</option>
+                            <option value="วิทยาลัยทันตแพทยศาสตร์นานาชาติ">วิทยาลัยทันตแพทยศาสตร์นานาชาติ</option>
+                            <option value="วิทยาลัยนานาชาติ">วิทยาลัยนานาชาติ</option>
+                            <option value="วิทยาลัยสัตวแพทยศาสตร์อัครราชกุมารี">วิทยาลัยสัตวแพทยศาสตร์อัครราชกุมารี</option>
+                            <option value="ส่วนส่งเสริมและพัฒนานักศึกษา">ส่วนส่งเสริมและพัฒนานักศึกษา</option>
+                            <option value="ศูนย์ส่งเสริมวัฒนธรรมและการกีฬา">ศูนย์ส่งเสริมวัฒนธรรมและการกีฬา</option>
+                            <option value="ศูนย์บริหารทรัพย์สิน">ศูนย์บริหารทรัพย์สิน</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="projectName" class="required">ชื่อโครงการ</label>
+                        <input type="text" id="projectName" name="projectName" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="startDate" class="required">วันเริ่มต้นกิจกรรม</label>
+                        <input type="date" id="startDate" name="startDate" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="endDate" class="required">วันสิ้นสุดกิจกรรม</label>
+                        <input type="date" id="endDate" name="endDate" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="responsible" class="required">ผู้รับผิดชอบหลัก</label>
+                        <input type="text" id="responsible" name="responsible" required>
+                        <small>กรุณาใส่ชื่อบุคคลหรือหน่วยงานย่อยที่รับผิดชอบโครงการ</small>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="hours" class="required">จำนวนชั่วโมงการจัดกิจกรรม</label>
+                        <input type="number" id="hours" name="hours" min="1" required>
+                        <div class="error-message" id="hoursError">กรุณากรอกเป็นตัวเลขเท่านั้น</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="targetGroup" class="required">กลุ่มเป้าหมาย</label>
+                        <select id="targetGroup" name="targetGroup" required>
+                            <option value="" disabled selected>กรุณาเลือกกลุ่มเป้าหมาย</option>
+                            <option value="นักศึกษาทั่วไป">นักศึกษาทั่วไป</option>
+                            <option value="นักศึกษาในสำนักวิชาเท่านั้น">นักศึกษาในสำนักวิชาเท่านั้น</option>
+                            <option value="กลุ่มเป้าหมายเฉพาะ">กลุ่มเป้าหมายเฉพาะ</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="participants" class="required">จำนวนผู้เข้าร่วม</label>
+                        <input type="number" id="participants" name="participants" min="1" required>
+                        <div class="error-message" id="participantsError">กรุณากรอกเป็นตัวเลขเท่านั้น</div>
+                    </div>
+                </div>
+                
+                <div class="form-section">
+                    <h2 class="section-title">อัตลักษณ์</h2>
+                    <p>ระบุสัดส่วน จำนวน ชม.เป็นร้อยละถ่วงน้ำหนัก (ผลรวมต้องเท่ากับ 100%)</p>
+                    
+                    <table class="identity-table">
+                        <thead>
+                            <tr>
+                                <th>อัตลักษณ์</th>
+                                <th>ประเภท</th>
+                                <th>ร้อยละ</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <select id="identity1" name="identity1" required>
+                                        <option value="" disabled selected>เลือกอัตลักษณ์</option>
+                                        <option value="รักชาติ">รักชาติ</option>
+                                        <option value="กตัญญู">กตัญญู</option>
+                                        <option value="รู้วินัย">รู้วินัย</option>
+                                        <option value="ใจอาสา">ใจอาสา</option>
+                                        <option value="พัฒนาภาวะผู้นำ">พัฒนาภาวะผู้นำ</option>
+                                    </select>
+                                </td>
+                                <td>หลัก</td>
+                                <td>
+                                    <input type="number" id="percentage1" name="percentage1" min="0" max="100" required class="percentage-input">
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <select id="identity2" name="identity2" class="identity-select">
+                                        <option value="" selected>เลือกอัตลักษณ์ (ถ้ามี)</option>
+                                        <option value="รักชาติ">รักชาติ</option>
+                                        <option value="กตัญญู">กตัญญู</option>
+                                        <option value="รู้วินัย">รู้วินัย</option>
+                                        <option value="ใจอาสา">ใจอาสา</option>
+                                        <option value="พัฒนาภาวะผู้นำ">พัฒนาภาวะผู้นำ</option>
+                                    </select>
+                                </td>
+                                <td>รอง</td>
+                                <td>
+                                    <input type="number" id="percentage2" name="percentage2" min="0" max="100" value="0" class="percentage-input">
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <select id="identity3" name="identity3" class="identity-select">
+                                        <option value="" selected>เลือกอัตลักษณ์ (ถ้ามี)</option>
+                                        <option value="รักชาติ">รักชาติ</option>
+                                        <option value="กตัญญู">กตัญญู</option>
+                                        <option value="รู้วินัย">รู้วินัย</option>
+                                        <option value="ใจอาสา">ใจอาสา</option>
+                                        <option value="พัฒนาภาวะผู้นำ">พัฒนาภาวะผู้นำ</option>
+                                    </select>
+                                </td>
+                                <td>รอง</td>
+                                <td>
+                                    <input type="number" id="percentage3" name="percentage3" min="0" max="100" value="0" class="percentage-input">
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <select id="identity4" name="identity4" class="identity-select">
+                                        <option value="" selected>เลือกอัตลักษณ์ (ถ้ามี)</option>
+                                        <option value="รักชาติ">รักชาติ</option>
+                                        <option value="กตัญญู">กตัญญู</option>
+                                        <option value="รู้วินัย">รู้วินัย</option>
+                                        <option value="ใจอาสา">ใจอาสา</option>
+                                        <option value="พัฒนาภาวะผู้นำ">พัฒนาภาวะผู้นำ</option>
+                                    </select>
+                                </td>
+                                <td>รอง</td>
+                                <td>
+                                    <input type="number" id="percentage4" name="percentage4" min="0" max="100" value="0" class="percentage-input">
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <select id="identity5" name="identity5" class="identity-select">
+                                        <option value="" selected>เลือกอัตลักษณ์ (ถ้ามี)</option>
+                                        <option value="รักชาติ">รักชาติ</option>
+                                        <option value="กตัญญู">กตัญญู</option>
+                                        <option value="รู้วินัย">รู้วินัย</option>
+                                        <option value="ใจอาสา">ใจอาสา</option>
+                                        <option value="พัฒนาภาวะผู้นำ">พัฒนาภาวะผู้นำ</option>
+                                    </select>
+                                </td>
+                                <td>รอง</td>
+                                <td>
+                                    <input type="number" id="percentage5" name="percentage5" min="0" max="100" value="0" class="percentage-input">
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    
+                    <div class="total-percentage">ผลรวม: <span id="totalPercentage">0</span>%</div>
+                    <div class="percentage-warning" id="percentageWarning">ผลรวมต้องเท่ากับ 100%</div>
+                </div>
+                
+                <div class="form-section">
+                    <h2 class="section-title">การพัฒนาสมรรถนะ</h2>
+                    
+                    <div class="competency-grid">
+                        <div class="competency-item">
+                            <label for="leadership" class="required">ความเป็นผู้นำ</label>
+                            <select id="leadership" name="leadership" required>
+                                <option value="" disabled selected>เลือก</option>
+                                <option value="มี">มี</option>
+                                <option value="ไม่มี">ไม่มี</option>
+                            </select>
+                        </div>
+                        
+                        <div class="competency-item">
+                            <label for="teamwork" class="required">การทำงานเป็นทีม</label>
+                            <select id="teamwork" name="teamwork" required>
+                                <option value="" disabled selected>เลือก</option>
+                                <option value="มี">มี</option>
+                                <option value="ไม่มี">ไม่มี</option>
+                            </select>
+                        </div>
+                        
+                        <div class="competency-item">
+                            <label for="analytical" class="required">การคิดวิเคราะห์</label>
+                            <select id="analytical" name="analytical" required>
+                                <option value="" disabled selected>เลือก</option>
+                                <option value="มี">มี</option>
+                                <option value="ไม่มี">ไม่มี</option>
+                            </select>
+                        </div>
+                        
+                        <div class="competency-item">
+                            <label for="problemSolving" class="required">การแก้ไขปัญหา</label>
+                            <select id="problemSolving" name="problemSolving" required>
+                                <option value="" disabled selected>เลือก</option>
+                                <option value="มี">มี</option>
+                                <option value="ไม่มี">ไม่มี</option>
+                            </select>
+                        </div>
+                        
+                        <div class="competency-item">
+                            <label for="communication" class="required">การสื่อสาร</label>
+                            <select id="communication" name="communication" required>
+                                <option value="" disabled selected>เลือก</option>
+                                <option value="มี">มี</option>
+                                <option value="ไม่มี">ไม่มี</option>
+                            </select>
+                        </div>
+                        
+                        <div class="competency-item">
+                            <label for="creativity" class="required">ความคิดสร้างสรรค์</label>
+                            <select id="creativity" name="creativity" required>
+                                <option value="" disabled selected>เลือก</option>
+                                <option value="มี">มี</option>
+                                <option value="ไม่มี">ไม่มี</option>
+                            </select>
+                        </div>
+                        
+                        <div class="competency-item">
+                            <label for="professional" class="required">การพัฒนาความเป็นวิชาชีพ</label>
+                            <select id="professional" name="professional" required>
+                                <option value="" disabled selected>เลือก</option>
+                                <option value="มี">มี</option>
+                                <option value="ไม่มี">ไม่มี</option>
+                            </select>
+                        </div>
+                        
+                        <div class="competency-item">
+                            <label for="international" class="required">ความเป็นนานาชาติ</label>
+                            <select id="international" name="international" required>
+                                <option value="" disabled selected>เลือก</option>
+                                <option value="มี">มี</option>
+                                <option value="ไม่มี">ไม่มี</option>
+                            </select>
+                        </div>
+                        
+                        <div class="competency-item">
+                            <label for="entrepreneurship" class="required">การเป็นผู้ประกอบการ</label>
+                            <select id="entrepreneurship" name="entrepreneurship" required>
+                                <option value="" disabled selected>เลือก</option>
+                                <option value="มี">มี</option>
+                                <option value="ไม่มี">ไม่มี</option>
+                            </select>
+                        </div>
+                        
+                        <div class="competency-item">
+                            <label for="digital" class="required">ทักษะด้านดิจิทัล</label>
+                            <select id="digital" name="digital" required>
+                                <option value="" disabled selected>เลือก</option>
+                                <option value="มี">มี</option>
+                                <option value="ไม่มี">ไม่มี</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                
+                <button type="submit" class="submit-btn">บันทึกข้อมูล</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('activityForm');
+            const percentageInputs = document.querySelectorAll('.percentage-input');
+            const totalPercentageSpan = document.getElementById('totalPercentage');
+            const percentageWarning = document.getElementById('percentageWarning');
+            const identitySelects = document.querySelectorAll('.identity-select');
+            
+            // Format date inputs to dd/mm/yyyy
+            const startDateInput = document.getElementById('startDate');
+            const endDateInput = document.getElementById('endDate');
+            
+            // Calculate total percentage
+            function calculateTotalPercentage() {
+                let total = 0;
+                percentageInputs.forEach(input => {
+                    total += parseInt(input.value || 0);
+                });
+                totalPercentageSpan.textContent = total;
+                
+                if (total !== 100) {
+                    percentageWarning.style.display = 'block';
+                    return false;
+                } else {
+                    percentageWarning.style.display = 'none';
+                    return true;
+                }
+            }
+            
+            // Update total when percentage inputs change
+            percentageInputs.forEach(input => {
+                input.addEventListener('input', calculateTotalPercentage);
+            });
+            
+            // Validate number inputs
+            const hoursInput = document.getElementById('hours');
+            const participantsInput = document.getElementById('participants');
+            const hoursError = document.getElementById('hoursError');
+            const participantsError = document.getElementById('participantsError');
+            
+            hoursInput.addEventListener('input', function() {
+                if (isNaN(this.value) || this.value <= 0) {
+                    hoursError.style.display = 'block';
+                } else {
+                    hoursError.style.display = 'none';
+                }
+            });
+            
+            participantsInput.addEventListener('input', function() {
+                if (isNaN(this.value) || this.value <= 0) {
+                    participantsError.style.display = 'block';
+                } else {
+                    participantsError.style.display = 'none';
+                }
+            });
+            
+            // Prevent duplicate identity selections
+            identitySelects.forEach(select => {
+                select.addEventListener('change', function() {
+                    const selectedValue = this.value;
+                    if (!selectedValue) return;
+                    
+                    identitySelects.forEach(otherSelect => {
+                        if (otherSelect !== this && otherSelect.value === selectedValue) {
+                            Swal.fire({
+                                title: 'ข้อผิดพลาด',
+                                text: 'คุณได้เลือกอัตลักษณ์นี้ไปแล้ว กรุณาเลือกอัตลักษณ์อื่น',
+                                icon: 'error',
+                                confirmButtonText: 'ตกลง',
+                                confirmButtonColor: '#9370DB'
+                            });
+                            this.value = '';
+                        }
+                    });
+                });
+            });
+            
+            // Form submission
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                // Validate percentage total
+                if (!calculateTotalPercentage()) {
+                    Swal.fire({
+                        title: 'ข้อผิดพลาด',
+                        text: 'ผลรวมร้อยละถ่วงน้ำหนักต้องเท่ากับ 100%',
+                        icon: 'error',
+                        confirmButtonText: 'ตกลง',
+                        confirmButtonColor: '#9370DB'
+                    });
+                    return;
+                }
+                
+                // Validate number inputs
+                if (isNaN(hoursInput.value) || hoursInput.value <= 0) {
+                    Swal.fire({
+                        title: 'ข้อผิดพลาด',
+                        text: 'กรุณากรอกจำนวนชั่วโมงเป็นตัวเลขที่มากกว่า 0',
+                        icon: 'error',
+                        confirmButtonText: 'ตกลง',
+                        confirmButtonColor: '#9370DB'
+                    });
+                    return;
+                }
+                
+                if (isNaN(participantsInput.value) || participantsInput.value <= 0) {
+                    Swal.fire({
+                        title: 'ข้อผิดพลาด',
+                        text: 'กรุณากรอกจำนวนผู้เข้าร่วมเป็นตัวเลขที่มากกว่า 0',
+                        icon: 'error',
+                        confirmButtonText: 'ตกลง',
+                        confirmButtonColor: '#9370DB'
+                    });
+                    return;
+                }
+                
+                // Format dates for submission (dd/mm/yyyy)
+                const formatDate = (dateInput) => {
+                    const date = new Date(dateInput.value);
+                    const day = String(date.getDate()).padStart(2, '0');
+                    const month = String(date.getMonth() + 1).padStart(2, '0');
+                    const year = date.getFullYear();
+                    return `${day}/${month}/${year}`;
+                };
+                
+                // Prepare form data
+                const formData = {
+                    department: document.getElementById('department').value,
+                    projectName: document.getElementById('projectName').value,
+                    startDate: formatDate(startDateInput),
+                    endDate: formatDate(endDateInput),
+                    responsible: document.getElementById('responsible').value,
+                    hours: document.getElementById('hours').value,
+                    targetGroup: document.getElementById('targetGroup').value,
+                    participants: document.getElementById('participants').value,
+                    identity1: document.getElementById('identity1').value,
+                    percentage1: document.getElementById('percentage1').value,
+                    identity2: document.getElementById('identity2').value || "-",
+                    percentage2: document.getElementById('percentage2').value,
+                    identity3: document.getElementById('identity3').value || "-",
+                    percentage3: document.getElementById('percentage3').value,
+                    identity4: document.getElementById('identity4').value || "-",
+                    percentage4: document.getElementById('percentage4').value,
+                    identity5: document.getElementById('identity5').value || "-",
+                    percentage5: document.getElementById('percentage5').value,
+                    leadership: document.getElementById('leadership').value,
+                    teamwork: document.getElementById('teamwork').value,
+                    analytical: document.getElementById('analytical').value,
+                    problemSolving: document.getElementById('problemSolving').value,
+                    communication: document.getElementById('communication').value,
+                    creativity: document.getElementById('creativity').value,
+                    professional: document.getElementById('professional').value,
+                    international: document.getElementById('international').value,
+                    entrepreneurship: document.getElementById('entrepreneurship').value,
+                    digital: document.getElementById('digital').value
+                };
+                
+                // Show loading
+                Swal.fire({
+                    title: 'กำลังบันทึกข้อมูล',
+                    text: 'กรุณารอสักครู่...',
+                    allowOutsideClick: false,
+                    didOpen: () => {
+                        Swal.showLoading();
+                    }
+                });
+                
+                // Submit data to Google Apps Script
+                fetch('https://script.google.com/macros/s/AKfycbyextMiWlq1SksSmhQSQIMG5Pj_revh0nTNo1xk5yLcPqCCnMuuwcHr-P50fTg9ufBiVQ/exec', {
+                    method: 'POST',
+                    body: JSON.stringify(formData),
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    mode: 'no-cors'
+                })
+                .then(() => {
+                    // Show success message
+                    Swal.fire({
+                        title: 'บันทึกข้อมูลสำเร็จ',
+                        text: 'ข้อมูลของท่านถูกบันทึกเรียบร้อยแล้ว',
+                        icon: 'success',
+                        confirmButtonText: 'ตกลง',
+                        confirmButtonColor: '#9370DB'
+                    }).then(() => {
+                        // Reset form
+                        form.reset();
+                        totalPercentageSpan.textContent = '0';
+                    });
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    Swal.fire({
+                        title: 'เกิดข้อผิดพลาด',
+                        text: 'ไม่สามารถบันทึกข้อมูลได้ กรุณาลองใหม่อีกครั้ง',
+                        icon: 'error',
+                        confirmButtonText: 'ตกลง',
+                        confirmButtonColor: '#9370DB'
+                    });
+                });
+            });
+        });
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'954520eb51397325',t:'MTc1MDY5MzY5NS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
