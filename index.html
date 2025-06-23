@@ -211,6 +211,12 @@
             margin-top: 5px;
             text-align: right;
         }
+        
+        /* เพิ่มสไตล์สำหรับ input ที่ถูก disabled */
+        input:disabled {
+            background-color: #f2f2f2;
+            cursor: not-allowed;
+        }
     </style>
 </head>
 <body>
@@ -341,7 +347,7 @@
                                 </td>
                                 <td>รอง</td>
                                 <td>
-                                    <input type="number" id="percentage2" name="percentage2" min="0" max="100" value="0" class="percentage-input">
+                                    <input type="number" id="percentage2" name="percentage2" min="0" max="100" value="0" class="percentage-input" disabled>
                                 </td>
                             </tr>
                             <tr>
@@ -357,7 +363,7 @@
                                 </td>
                                 <td>รอง</td>
                                 <td>
-                                    <input type="number" id="percentage3" name="percentage3" min="0" max="100" value="0" class="percentage-input">
+                                    <input type="number" id="percentage3" name="percentage3" min="0" max="100" value="0" class="percentage-input" disabled>
                                 </td>
                             </tr>
                             <tr>
@@ -373,7 +379,7 @@
                                 </td>
                                 <td>รอง</td>
                                 <td>
-                                    <input type="number" id="percentage4" name="percentage4" min="0" max="100" value="0" class="percentage-input">
+                                    <input type="number" id="percentage4" name="percentage4" min="0" max="100" value="0" class="percentage-input" disabled>
                                 </td>
                             </tr>
                             <tr>
@@ -389,7 +395,7 @@
                                 </td>
                                 <td>รอง</td>
                                 <td>
-                                    <input type="number" id="percentage5" name="percentage5" min="0" max="100" value="0" class="percentage-input">
+                                    <input type="number" id="percentage5" name="percentage5" min="0" max="100" value="0" class="percentage-input" disabled>
                                 </td>
                             </tr>
                         </tbody>
@@ -516,7 +522,9 @@
             function calculateTotalPercentage() {
                 let total = 0;
                 percentageInputs.forEach(input => {
-                    total += parseInt(input.value || 0);
+                    if (!input.disabled) {
+                        total += parseInt(input.value || 0);
+                    }
                 });
                 totalPercentageSpan.textContent = total;
                 
@@ -556,6 +564,34 @@
                 }
             });
             
+            // ควบคุมการเปิด/ปิดช่องกรอกร้อยละตามการเลือกอัตลักษณ์
+            function togglePercentageInput(selectElement, inputElement) {
+                if (selectElement.value === "") {
+                    inputElement.disabled = true;
+                    inputElement.value = "0";
+                } else {
+                    inputElement.disabled = false;
+                }
+                calculateTotalPercentage();
+            }
+            
+            // ตั้งค่าเริ่มต้นสำหรับช่องกรอกร้อยละ
+            document.getElementById('identity2').addEventListener('change', function() {
+                togglePercentageInput(this, document.getElementById('percentage2'));
+            });
+            
+            document.getElementById('identity3').addEventListener('change', function() {
+                togglePercentageInput(this, document.getElementById('percentage3'));
+            });
+            
+            document.getElementById('identity4').addEventListener('change', function() {
+                togglePercentageInput(this, document.getElementById('percentage4'));
+            });
+            
+            document.getElementById('identity5').addEventListener('change', function() {
+                togglePercentageInput(this, document.getElementById('percentage5'));
+            });
+            
             // Prevent duplicate identity selections
             identitySelects.forEach(select => {
                 select.addEventListener('change', function() {
@@ -572,6 +608,17 @@
                                 confirmButtonColor: '#9370DB'
                             });
                             this.value = '';
+                            
+                            // ถ้าเป็น identity-select ให้ปิด input ร้อยละด้วย
+                            if (this.classList.contains('identity-select')) {
+                                const inputId = this.id.replace('identity', 'percentage');
+                                const percentageInput = document.getElementById(inputId);
+                                if (percentageInput) {
+                                    percentageInput.disabled = true;
+                                    percentageInput.value = "0";
+                                    calculateTotalPercentage();
+                                }
+                            }
                         }
                     });
                 });
@@ -638,13 +685,13 @@
                     identity1: document.getElementById('identity1').value,
                     percentage1: document.getElementById('percentage1').value,
                     identity2: document.getElementById('identity2').value || "-",
-                    percentage2: document.getElementById('percentage2').value,
+                    percentage2: document.getElementById('percentage2').disabled ? "0" : document.getElementById('percentage2').value,
                     identity3: document.getElementById('identity3').value || "-",
-                    percentage3: document.getElementById('percentage3').value,
+                    percentage3: document.getElementById('percentage3').disabled ? "0" : document.getElementById('percentage3').value,
                     identity4: document.getElementById('identity4').value || "-",
-                    percentage4: document.getElementById('percentage4').value,
+                    percentage4: document.getElementById('percentage4').disabled ? "0" : document.getElementById('percentage4').value,
                     identity5: document.getElementById('identity5').value || "-",
-                    percentage5: document.getElementById('percentage5').value,
+                    percentage5: document.getElementById('percentage5').disabled ? "0" : document.getElementById('percentage5').value,
                     leadership: document.getElementById('leadership').value,
                     teamwork: document.getElementById('teamwork').value,
                     analytical: document.getElementById('analytical').value,
@@ -688,6 +735,12 @@
                         // Reset form
                         form.reset();
                         totalPercentageSpan.textContent = '0';
+                        
+                        // ตั้งค่าให้ช่องกรอกร้อยละถูก disabled เมื่อรีเซ็ตฟอร์ม
+                        document.getElementById('percentage2').disabled = true;
+                        document.getElementById('percentage3').disabled = true;
+                        document.getElementById('percentage4').disabled = true;
+                        document.getElementById('percentage5').disabled = true;
                     });
                 })
                 .catch(error => {
@@ -703,5 +756,5 @@
             });
         });
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'954520eb51397325',t:'MTc1MDY5MzY5NS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9545410261807322',t:'MTc1MDY5NTAxMC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
